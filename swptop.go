@@ -10,15 +10,16 @@ package main
 import (
 	"fmt"
 	"os"
-	"pkg.re/essentialkaos/ek.v8/fmtutil"
-	"pkg.re/essentialkaos/ek.v8/system/process"
 	"sort"
 	"strings"
 
 	"pkg.re/essentialkaos/ek.v8/arg"
 	"pkg.re/essentialkaos/ek.v8/env"
 	"pkg.re/essentialkaos/ek.v8/fmtc"
+	"pkg.re/essentialkaos/ek.v8/fmtutil"
 	"pkg.re/essentialkaos/ek.v8/fsutil"
+	"pkg.re/essentialkaos/ek.v8/strutil"
+	"pkg.re/essentialkaos/ek.v8/system/process"
 	"pkg.re/essentialkaos/ek.v8/usage"
 	"pkg.re/essentialkaos/ek.v8/usage/update"
 )
@@ -145,7 +146,8 @@ func printPrettyTop() {
 	for _, pi := range info {
 		fmtc.Printf(
 			" %5d {s}|{!} %16s {s}|{!} %8s {s}|{!} %-s\n",
-			pi.PID, pi.User, fmtutil.PrettySize(pi.VmSwap), pi.Command,
+			pi.PID, pi.User, fmtutil.PrettySize(pi.VmSwap),
+			strutil.Ellipsis(pi.Command, 64),
 		)
 	}
 
@@ -205,7 +207,7 @@ func collectInfo() (ProcessInfoSlice, error) {
 		)
 	}
 
-	sort.Sort(result)
+	sort.Sort(sort.Reverse(result))
 
 	return result, nil
 }

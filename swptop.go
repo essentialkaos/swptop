@@ -1,3 +1,5 @@
+// +build linux
+
 package main
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -29,7 +31,7 @@ import (
 
 const (
 	APP  = "swptop"
-	VER  = "0.1.0"
+	VER  = "0.1.1"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 

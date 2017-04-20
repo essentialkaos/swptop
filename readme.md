@@ -38,10 +38,6 @@ go get -u github.com/essentialkaos/swptop
 [sudo] yum install swptop
 ```
 
-### Prebuilt binaries
-
-You can download prebuilt binaries for Linux and OS X from [EK Apps Repository](https://apps.kaos.io/swptop/latest).
-
 ## Usage
 
 ```

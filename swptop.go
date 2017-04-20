@@ -20,6 +20,7 @@ import (
 	"pkg.re/essentialkaos/ek.v8/fsutil"
 	"pkg.re/essentialkaos/ek.v8/strutil"
 	"pkg.re/essentialkaos/ek.v8/system/process"
+	"pkg.re/essentialkaos/ek.v8/terminal/window"
 	"pkg.re/essentialkaos/ek.v8/usage"
 	"pkg.re/essentialkaos/ek.v8/usage/update"
 )
@@ -57,13 +58,18 @@ func (s ProcessInfoSlice) Less(i, j int) bool { return s[i].VmSwap < s[j].VmSwap
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// Arguments map
 var argMap = arg.Map{
 	ARG_NO_COLOR: {Type: arg.BOOL},
 	ARG_HELP:     {Type: arg.BOOL, Alias: "u:usage"},
 	ARG_VER:      {Type: arg.BOOL, Alias: "ver"},
 }
 
+// Raw output flag
 var useRawOutput bool
+
+// Window width
+var winWidth int
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -121,6 +127,11 @@ func configureUI() {
 		fmtc.DisableColors = true
 		useRawOutput = true
 	}
+
+	if !useRawOutput {
+		fmtutil.SeparatorFullscreen = true
+		winWidth = window.GetWidth()
+	}
 }
 
 // printPrettyTop print info with separators and headers
@@ -136,6 +147,12 @@ func printPrettyTop() {
 		return
 	}
 
+	cmdEllipsis := 64
+
+	if winWidth > 110 {
+		cmdEllipsis = winWidth - 40
+	}
+
 	fmtutil.Separator(true)
 	fmtc.Printf(
 		" {*}%5s{!} {s}|{!} {*}%16s{!} {s}|{!} {*}%8s{!} {s}|{!} {*}%-s{!}\n",
@@ -147,7 +164,7 @@ func printPrettyTop() {
 		fmtc.Printf(
 			" %5d {s}|{!} %16s {s}|{!} %8s {s}|{!} %-s\n",
 			pi.PID, pi.User, fmtutil.PrettySize(pi.VmSwap),
-			strutil.Ellipsis(pi.Command, 64),
+			strutil.Ellipsis(pi.Command, cmdEllipsis),
 		)
 	}
 

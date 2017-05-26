@@ -15,30 +15,30 @@ import (
 	"sort"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v8/arg"
-	"pkg.re/essentialkaos/ek.v8/env"
-	"pkg.re/essentialkaos/ek.v8/fmtc"
-	"pkg.re/essentialkaos/ek.v8/fmtutil"
-	"pkg.re/essentialkaos/ek.v8/fsutil"
-	"pkg.re/essentialkaos/ek.v8/strutil"
-	"pkg.re/essentialkaos/ek.v8/system/process"
-	"pkg.re/essentialkaos/ek.v8/terminal/window"
-	"pkg.re/essentialkaos/ek.v8/usage"
-	"pkg.re/essentialkaos/ek.v8/usage/update"
+	"pkg.re/essentialkaos/ek.v9/env"
+	"pkg.re/essentialkaos/ek.v9/fmtc"
+	"pkg.re/essentialkaos/ek.v9/fmtutil"
+	"pkg.re/essentialkaos/ek.v9/fsutil"
+	"pkg.re/essentialkaos/ek.v9/options"
+	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v9/system/process"
+	"pkg.re/essentialkaos/ek.v9/terminal/window"
+	"pkg.re/essentialkaos/ek.v9/usage"
+	"pkg.re/essentialkaos/ek.v9/usage/update"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
 	APP  = "swptop"
-	VER  = "0.1.1"
+	VER  = "0.2.0"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 
 const (
-	ARG_NO_COLOR = "nc:no-color"
-	ARG_HELP     = "h:help"
-	ARG_VER      = "v:version"
+	OPT_NO_COLOR = "nc:no-color"
+	OPT_HELP     = "h:help"
+	OPT_VER      = "v:version"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -60,11 +60,11 @@ func (s ProcessInfoSlice) Less(i, j int) bool { return s[i].VmSwap < s[j].VmSwap
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
-// Arguments map
-var argMap = arg.Map{
-	ARG_NO_COLOR: {Type: arg.BOOL},
-	ARG_HELP:     {Type: arg.BOOL, Alias: "u:usage"},
-	ARG_VER:      {Type: arg.BOOL, Alias: "ver"},
+// optMap is map with options
+var optMap = options.Map{
+	OPT_NO_COLOR: {Type: options.BOOL},
+	OPT_HELP:     {Type: options.BOOL, Alias: "u:usage"},
+	OPT_VER:      {Type: options.BOOL, Alias: "ver"},
 }
 
 // Raw output flag
@@ -76,7 +76,7 @@ var winWidth int
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func main() {
-	_, errs := arg.Parse(argMap)
+	_, errs := options.Parse(optMap)
 
 	if len(errs) != 0 {
 		for _, err := range errs {
@@ -88,12 +88,12 @@ func main() {
 
 	configureUI()
 
-	if arg.GetB(ARG_VER) {
+	if options.GetB(OPT_VER) {
 		showAbout()
 		return
 	}
 
-	if arg.GetB(ARG_HELP) {
+	if options.GetB(OPT_HELP) {
 		showUsage()
 		return
 	}
@@ -121,7 +121,7 @@ func configureUI() {
 		}
 	}
 
-	if arg.GetB(ARG_NO_COLOR) {
+	if options.GetB(OPT_NO_COLOR) {
 		fmtc.DisableColors = true
 	}
 
@@ -252,9 +252,9 @@ func printErrorAndExit(f string, a ...interface{}) {
 func showUsage() {
 	info := usage.NewInfo("")
 
-	info.AddOption(ARG_NO_COLOR, "Disable colors in output")
-	info.AddOption(ARG_HELP, "Show this help message")
-	info.AddOption(ARG_VER, "Show version")
+	info.AddOption(OPT_NO_COLOR, "Disable colors in output")
+	info.AddOption(OPT_HELP, "Show this help message")
+	info.AddOption(OPT_VER, "Show version")
 
 	info.Render()
 }

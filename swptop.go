@@ -12,6 +12,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"pkg.re/essentialkaos/ek.v9/system"
 	"sort"
 	"strings"
 
@@ -177,6 +178,25 @@ func printPrettyTop() {
 	}
 
 	fmtutil.Separator(true)
+
+	printOverallInfo()
+}
+
+// printOverallInfo print overall swap usage info
+func printOverallInfo() {
+	info := getOveralSwapUsage()
+
+	if info == nil {
+		return
+	}
+
+	fmtc.Printf(
+		" {*}Usage:{!} %s{s}/{!}%s\n",
+		fmtutil.PrettySize(info.SwapUsed),
+		fmtutil.PrettySize(info.SwapTotal),
+	)
+
+	fmtutil.Separator(true)
 }
 
 // printRawTop just print raw info
@@ -249,6 +269,17 @@ func ignoreInfo(info ProcessInfo) bool {
 	}
 
 	return false
+}
+
+// getOveralSwapUsage get overall memory info
+func getOveralSwapUsage() *system.MemInfo {
+	info, err := system.GetMemInfo()
+
+	if err != nil {
+		return nil
+	}
+
+	return info
 }
 
 // printError prints error message to console

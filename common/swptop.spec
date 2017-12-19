@@ -59,7 +59,8 @@ rm -rf %{buildroot}
 %changelog
 * Tue Dec 19 2017 Anton Novojilov <andy@essentialkaos.com> - 0.3.0-0
 - Added output filtering feature
-- ek package updated to v9
+- Output overall swap usage info
+- ek package updated to latest stable release
 
 * Fri May 26 2017 Anton Novojilov <andy@essentialkaos.com> - 0.2.0-0
 - ek package updated to v9

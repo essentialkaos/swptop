@@ -162,6 +162,8 @@ func printPrettyTop() {
 		cmdEllipsis = winWidth - 40
 	}
 
+	fmtc.NewLine()
+
 	fmtutil.Separator(true)
 	fmtc.Printf(
 		" {*}%5s{!} {s}|{!} {*}%16s{!} {s}|{!} {*}%8s{!} {s}|{!} {*}%-s{!}\n",
@@ -180,6 +182,8 @@ func printPrettyTop() {
 	fmtutil.Separator(true)
 
 	printOverallInfo()
+
+	fmtc.NewLine()
 }
 
 // printOverallInfo print overall swap usage info
@@ -190,10 +194,13 @@ func printOverallInfo() {
 		return
 	}
 
+	usagePerc := (float64(info.SwapUsed) / float64(info.SwapTotal)) * 100.0
+
 	fmtc.Printf(
-		" {*}Usage:{!} %s{s}/{!}%s\n",
+		"  {*}Usage:{!} %s{s} / {!}%s {s-}(%g%%){!}\n",
 		fmtutil.PrettySize(info.SwapUsed),
 		fmtutil.PrettySize(info.SwapTotal),
+		fmtutil.Float(usagePerc),
 	)
 
 	fmtutil.Separator(true)

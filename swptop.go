@@ -12,7 +12,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"pkg.re/essentialkaos/ek.v9/system"
 	"sort"
 	"strings"
 
@@ -22,6 +21,7 @@ import (
 	"pkg.re/essentialkaos/ek.v9/fsutil"
 	"pkg.re/essentialkaos/ek.v9/options"
 	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v9/system"
 	"pkg.re/essentialkaos/ek.v9/system/process"
 	"pkg.re/essentialkaos/ek.v9/terminal/window"
 	"pkg.re/essentialkaos/ek.v9/usage"
@@ -74,10 +74,10 @@ var optMap = options.Map{
 	OPT_VER:      {Type: options.BOOL, Alias: "ver"},
 }
 
-// Raw output flag
+// useRawOutput is raw output flag
 var useRawOutput bool
 
-// Window width
+// winWidth is current window width
 var winWidth int
 
 // ////////////////////////////////////////////////////////////////////////////////// //

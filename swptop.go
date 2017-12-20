@@ -21,6 +21,7 @@ import (
 	"pkg.re/essentialkaos/ek.v9/fsutil"
 	"pkg.re/essentialkaos/ek.v9/options"
 	"pkg.re/essentialkaos/ek.v9/strutil"
+	"pkg.re/essentialkaos/ek.v9/system"
 	"pkg.re/essentialkaos/ek.v9/system/process"
 	"pkg.re/essentialkaos/ek.v9/terminal/window"
 	"pkg.re/essentialkaos/ek.v9/usage"
@@ -31,11 +32,13 @@ import (
 
 const (
 	APP  = "swptop"
-	VER  = "0.2.0"
+	VER  = "0.3.0"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 
 const (
+	OPT_USER     = "u:user"
+	OPT_FILTER   = "f:filter"
 	OPT_NO_COLOR = "nc:no-color"
 	OPT_HELP     = "h:help"
 	OPT_VER      = "v:version"
@@ -43,6 +46,7 @@ const (
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// ProcessInfo contains basic info about process
 type ProcessInfo struct {
 	PID     int
 	VmSwap  uint64
@@ -50,6 +54,7 @@ type ProcessInfo struct {
 	Command string
 }
 
+// ProcessInfoSlice is ProcessInfo slice
 type ProcessInfoSlice []ProcessInfo
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -62,15 +67,17 @@ func (s ProcessInfoSlice) Less(i, j int) bool { return s[i].VmSwap < s[j].VmSwap
 
 // optMap is map with options
 var optMap = options.Map{
+	OPT_USER:     {},
+	OPT_FILTER:   {},
 	OPT_NO_COLOR: {Type: options.BOOL},
-	OPT_HELP:     {Type: options.BOOL, Alias: "u:usage"},
+	OPT_HELP:     {Type: options.BOOL},
 	OPT_VER:      {Type: options.BOOL, Alias: "ver"},
 }
 
-// Raw output flag
+// useRawOutput is raw output flag
 var useRawOutput bool
 
-// Window width
+// winWidth is current window width
 var winWidth int
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -145,7 +152,7 @@ func printPrettyTop() {
 	}
 
 	if len(info) == 0 {
-		fmtc.Println("{g}System doesn't have any process with swap usage{!}")
+		fmtc.Println("{g}Can't find any process with swap usage{!}")
 		return
 	}
 
@@ -154,6 +161,8 @@ func printPrettyTop() {
 	if winWidth > 110 {
 		cmdEllipsis = winWidth - 40
 	}
+
+	fmtc.NewLine()
 
 	fmtutil.Separator(true)
 	fmtc.Printf(
@@ -169,6 +178,30 @@ func printPrettyTop() {
 			strutil.Ellipsis(pi.Command, cmdEllipsis),
 		)
 	}
+
+	fmtutil.Separator(true)
+
+	printOverallInfo()
+
+	fmtc.NewLine()
+}
+
+// printOverallInfo print overall swap usage info
+func printOverallInfo() {
+	info := getOveralSwapUsage()
+
+	if info == nil {
+		return
+	}
+
+	usagePerc := (float64(info.SwapUsed) / float64(info.SwapTotal)) * 100.0
+
+	fmtc.Printf(
+		"  {*}Usage:{!} %s{s} / {!}%s {s-}(%g%%){!}\n",
+		fmtutil.PrettySize(info.SwapUsed),
+		fmtutil.PrettySize(info.SwapTotal),
+		fmtutil.Float(usagePerc),
+	)
 
 	fmtutil.Separator(true)
 }
@@ -207,28 +240,53 @@ func collectInfo() (ProcessInfoSlice, error) {
 
 		memInfo, err := process.GetMemInfo(pi.PID)
 
-		if err != nil {
+		if err != nil || memInfo.VmSwap == 0 {
 			continue
 		}
 
-		if memInfo.VmSwap == 0 {
-			continue
+		info := ProcessInfo{
+			PID:     pi.PID,
+			User:    pi.User,
+			Command: pi.Command,
+			VmSwap:  memInfo.VmSwap,
 		}
 
-		result = append(
-			result,
-			ProcessInfo{
-				PID:     pi.PID,
-				User:    pi.User,
-				Command: pi.Command,
-				VmSwap:  memInfo.VmSwap,
-			},
-		)
+		if !ignoreInfo(info) {
+			result = append(result, info)
+		}
 	}
 
 	sort.Sort(sort.Reverse(result))
 
 	return result, nil
+}
+
+// ignoreInfo return true if we must ignore this info
+func ignoreInfo(info ProcessInfo) bool {
+	if options.Has(OPT_USER) {
+		if info.User != options.GetS(OPT_USER) {
+			return true
+		}
+	}
+
+	if options.Has(OPT_FILTER) {
+		if !strings.Contains(info.Command, options.GetS(OPT_FILTER)) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// getOveralSwapUsage get overall memory info
+func getOveralSwapUsage() *system.MemInfo {
+	info, err := system.GetMemInfo()
+
+	if err != nil {
+		return nil
+	}
+
+	return info
 }
 
 // printError prints error message to console
@@ -250,8 +308,10 @@ func printErrorAndExit(f string, a ...interface{}) {
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 func showUsage() {
-	info := usage.NewInfo("")
+	info := usage.NewInfo()
 
+	info.AddOption(OPT_USER, "Filter output by user")
+	info.AddOption(OPT_FILTER, "Filter output by part of command")
 	info.AddOption(OPT_NO_COLOR, "Disable colors in output")
 	info.AddOption(OPT_HELP, "Show this help message")
 	info.AddOption(OPT_VER, "Show version")

@@ -10,7 +10,7 @@
 
 Summary:         Utility for viewing swap consumption of processes
 Name:            swptop
-Version:         0.2.0
+Version:         0.3.0
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -20,7 +20,7 @@ Source0:         https://source.kaos.io/%{name}/%{name}-%{version}.tar.bz2
 
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:   golang >= 1.8
+BuildRequires:   golang >= 1.9
 
 Provides:        %{name} = %{version}-%{release}
 
@@ -57,6 +57,11 @@ rm -rf %{buildroot}
 ###############################################################################
 
 %changelog
+* Tue Dec 19 2017 Anton Novojilov <andy@essentialkaos.com> - 0.3.0-0
+- Added output filtering feature
+- Output overall swap usage info
+- ek package updated to latest stable release
+
 * Fri May 26 2017 Anton Novojilov <andy@essentialkaos.com> - 0.2.0-0
 - ek package updated to v9
 

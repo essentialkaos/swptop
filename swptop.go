@@ -307,6 +307,8 @@ func printErrorAndExit(f string, a ...interface{}) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// codebeat:disable[ABC]
+
 func showUsage() {
 	info := usage.NewInfo()
 
@@ -323,6 +325,8 @@ func showUsage() {
 
 	info.Render()
 }
+
+// codebeat:enable[ABC]
 
 func showAbout() {
 	about := &usage.About{

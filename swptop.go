@@ -32,7 +32,7 @@ import (
 
 const (
 	APP  = "swptop"
-	VER  = "0.3.0"
+	VER  = "0.3.1"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 
@@ -315,6 +315,11 @@ func showUsage() {
 	info.AddOption(OPT_NO_COLOR, "Disable colors in output")
 	info.AddOption(OPT_HELP, "Show this help message")
 	info.AddOption(OPT_VER, "Show version")
+
+	info.AddExample("", "Show current swap consumption of all processes")
+	info.AddExample("-u redis", "Show current swap consumption by webserver user processes")
+	info.AddExample("-f redis-server", "Show current swap consumption by processes with 'redis-server' in command")
+	info.AddExample("| wc -l", "Count number of processes which use swap")
 
 	info.Render()
 }

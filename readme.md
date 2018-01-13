@@ -45,9 +45,25 @@ Usage: swptop {options}
 
 Options
 
+  --user, -u         Filter output by user
+  --filter, -f       Filter output by part of command
   --no-color, -nc    Disable colors in output
   --help, -h         Show this help message
   --version, -v      Show version
+
+Examples
+
+  swptop
+  Show current swap consumption of all processes
+
+  swptop -u redis
+  Show current swap consumption by webserver user processes
+
+  swptop -f redis-server
+  Show current swap consumption by processes with 'redis-server' in command
+
+  swptop | wc -l
+  Count number of processes which use swap
 
 ```
 

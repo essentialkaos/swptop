@@ -1,16 +1,16 @@
-###############################################################################
+################################################################################
 
 # rpmbuilder:relative-pack true
 
-###############################################################################
+################################################################################
 
 %define  debug_package %{nil}
 
-###############################################################################
+################################################################################
 
 Summary:         Utility for viewing swap consumption of processes
 Name:            swptop
-Version:         0.3.1
+Version:         0.3.2
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -24,18 +24,18 @@ BuildRequires:   golang >= 1.9
 
 Provides:        %{name} = %{version}-%{release}
 
-###############################################################################
+################################################################################
 
 %description
 Utility for viewing swap consumption of processes.
 
-###############################################################################
+################################################################################
 
 %prep
 %setup -q
 
 %build
-export GOPATH=$(pwd) 
+export GOPATH=$(pwd)
 go build src/github.com/essentialkaos/%{name}/%{name}.go
 
 %install
@@ -47,16 +47,19 @@ install -pm 755 %{name} %{buildroot}%{_bindir}/
 %clean
 rm -rf %{buildroot}
 
-###############################################################################
+################################################################################
 
 %files
 %defattr(-,root,root,-)
 %doc LICENSE.EN LICENSE.RU
 %{_bindir}/%{name}
 
-###############################################################################
+################################################################################
 
 %changelog
+* Wed Jan 31 2018 Anton Novojilov <andy@essentialkaos.com> - 0.3.2-0
+- Fixed overall statistics calculation for filtered results
+
 * Fri Jan 12 2018 Anton Novojilov <andy@essentialkaos.com> - 0.3.1-0
 - Added usage examples
 

@@ -32,7 +32,7 @@ import (
 
 const (
 	APP  = "swptop"
-	VER  = "0.3.2"
+	VER  = "0.4.0"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 

@@ -16,7 +16,7 @@ Group:           Applications/System
 License:         EKOL
 URL:             https://github.com/essentialkaos/swptop
 
-Source0:         https://source.kaos.io/%{name}/%{name}-%{version}.tar.bz2
+Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 

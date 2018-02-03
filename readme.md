@@ -1,4 +1,4 @@
-# `swptop` [![Build Status](https://travis-ci.org/essentialkaos/swptop.svg?branch=master)](https://travis-ci.org/essentialkaos/swptop) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/swptop)](https://goreportcard.com/report/github.com/essentialkaos/swptop) [![codebeat badge](https://codebeat.co/badges/21eb1670-e54a-4373-8f4b-cfb861198d4c)](https://codebeat.co/projects/github-com-essentialkaos-swptop-master) [![License](https://gh.kaos.io/ekol.svg)](https://essentialkaos.com/ekol)
+# `swptop` [![Build Status](https://travis-ci.org/essentialkaos/swptop.svg?branch=master)](https://travis-ci.org/essentialkaos/swptop) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/swptop)](https://goreportcard.com/report/github.com/essentialkaos/swptop) [![codebeat badge](https://codebeat.co/badges/21eb1670-e54a-4373-8f4b-cfb861198d4c)](https://codebeat.co/projects/github-com-essentialkaos-swptop-master) [![License](https://gh.kaos.st/ekol.svg)](https://essentialkaos.com/ekol)
 
 `swptop` is simple utility for viewing swap consumption of processes.
 
@@ -27,14 +27,14 @@ go get -u github.com/essentialkaos/swptop
 #### From ESSENTIAL KAOS Public repo for RHEL6/CentOS6
 
 ```
-[sudo] yum install -y https://yum.kaos.io/6/release/x86_64/kaos-repo-8.0-0.el6.noarch.rpm
+[sudo] yum install -y https://yum.kaos.st/6/release/x86_64/kaos-repo-9.0-0.el6.noarch.rpm
 [sudo] yum install swptop
 ```
 
 #### From ESSENTIAL KAOS Public repo for RHEL7/CentOS7
 
 ```
-[sudo] yum install -y https://yum.kaos.io/7/release/x86_64/kaos-repo-8.0-0.el7.noarch.rpm
+[sudo] yum install -y https://yum.kaos.st/7/release/x86_64/kaos-repo-9.0-0.el7.noarch.rpm
 [sudo] yum install swptop
 ```
 
@@ -82,4 +82,4 @@ Before contributing to this project please read our [Contributing Guidelines](ht
 
 [EKOL](https://essentialkaos.com/ekol)
 
-<p align="center"><a href="https://essentialkaos.com"><img src="https://gh.kaos.io/ekgh.svg"/></a></p>
+<p align="center"><a href="https://essentialkaos.com"><img src="https://gh.kaos.st/ekgh.svg"/></a></p>

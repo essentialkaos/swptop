@@ -199,7 +199,7 @@ func printOverallInfo(info ProcessInfoSlice) {
 	overallUsed := overall.SwapUsed
 
 	// Procfs cannot show values less than 1kb, so we have use calculated processes usage
-	if overallUsed == 0 && procUsed > 0 {
+	if procUsed > overallUsed {
 		overallUsed = procUsed
 	}
 

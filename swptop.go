@@ -4,7 +4,7 @@ package main
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2017 ESSENTIAL KAOS                         //
+//                     Copyright (c) 2009-2018 ESSENTIAL KAOS                         //
 //        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -32,7 +32,7 @@ import (
 
 const (
 	APP  = "swptop"
-	VER  = "0.3.1"
+	VER  = "0.4.0"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 
@@ -181,27 +181,43 @@ func printPrettyTop() {
 
 	fmtutil.Separator(true)
 
-	printOverallInfo()
+	printOverallInfo(info)
 
 	fmtc.NewLine()
 }
 
 // printOverallInfo print overall swap usage info
-func printOverallInfo() {
-	info := getOveralSwapUsage()
+func printOverallInfo(info ProcessInfoSlice) {
+	overall := getOverallSwapUsage()
 
-	if info == nil {
+	if overall == nil {
 		return
 	}
 
-	usagePerc := (float64(info.SwapUsed) / float64(info.SwapTotal)) * 100.0
+	procUsed := calculateUsage(info)
+	procUsedPerc := (float64(procUsed) / float64(overall.SwapTotal)) * 100.0
+	overallUsed := overall.SwapUsed
+
+	// Procfs cannot show values less than 1kb, so we have use calculated processes usage
+	if procUsed > overallUsed {
+		overallUsed = procUsed
+	}
+
+	overallUsedPerc := (float64(overallUsed) / float64(overall.SwapTotal)) * 100.0
 
 	fmtc.Printf(
-		"  {*}Usage:{!} %s{s} / {!}%s {s-}(%g%%){!}\n",
-		fmtutil.PrettySize(info.SwapUsed),
-		fmtutil.PrettySize(info.SwapTotal),
-		fmtutil.Float(usagePerc),
+		"  {*}Processes:{!} %s {s-}(%s){!}\n",
+		fmtutil.PrettySize(procUsed),
+		fmtutil.PrettyPerc(procUsedPerc),
 	)
+
+	fmtc.Printf(
+		"  {*}Overall:{!}   %s {s-}(%s){!}\n",
+		fmtutil.PrettySize(overallUsed),
+		fmtutil.PrettyPerc(overallUsedPerc),
+	)
+
+	fmtc.Printf("  {*}Total:{!}     %s\n", fmtutil.PrettySize(overall.SwapTotal))
 
 	fmtutil.Separator(true)
 }
@@ -278,8 +294,8 @@ func ignoreInfo(info ProcessInfo) bool {
 	return false
 }
 
-// getOveralSwapUsage get overall memory info
-func getOveralSwapUsage() *system.MemInfo {
+// getOverallSwapUsage get overall memory info
+func getOverallSwapUsage() *system.MemInfo {
 	info, err := system.GetMemInfo()
 
 	if err != nil {
@@ -287,6 +303,17 @@ func getOveralSwapUsage() *system.MemInfo {
 	}
 
 	return info
+}
+
+// calculateUsage calculate total swap usage
+func calculateUsage(info ProcessInfoSlice) uint64 {
+	var result uint64
+
+	for _, processInfo := range info {
+		result += processInfo.VmSwap
+	}
+
+	return result
 }
 
 // printError prints error message to console

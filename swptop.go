@@ -199,22 +199,22 @@ func printOverallInfo(info ProcessInfoSlice) {
 	overallUsed := overall.SwapUsed
 
 	// Procfs cannot show values less than 1kb, so we have use calculated processes usage
-	if procUsed <= 1024 {
+	if overallUsed == 0 && procUsed > 0 {
 		overallUsed = procUsed
 	}
 
 	overallUsedPerc := (float64(overallUsed) / float64(overall.SwapTotal)) * 100.0
 
 	fmtc.Printf(
-		"  {*}Processes:{!} %s {s-}(%g%%){!}\n",
+		"  {*}Processes:{!} %s {s-}(%s){!}\n",
 		fmtutil.PrettySize(procUsed),
-		fmtutil.Float(procUsedPerc),
+		fmtutil.PrettyPerc(procUsedPerc),
 	)
 
 	fmtc.Printf(
-		"  {*}Overall:{!}   %s {s-}(%g%%){!}\n",
+		"  {*}Overall:{!}   %s {s-}(%s){!}\n",
 		fmtutil.PrettySize(overallUsed),
-		fmtutil.Float(overallUsedPerc),
+		fmtutil.PrettyPerc(overallUsedPerc),
 	)
 
 	fmtc.Printf("  {*}Total:{!}     %s\n", fmtutil.PrettySize(overall.SwapTotal))

@@ -11,6 +11,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"sort"
 	"strings"
@@ -32,7 +33,7 @@ import (
 
 const (
 	APP  = "swptop"
-	VER  = "0.4.0"
+	VER  = "0.4.1"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 
@@ -205,17 +206,25 @@ func printOverallInfo(info ProcessInfoSlice) {
 
 	overallUsedPerc := (float64(overallUsed) / float64(overall.SwapTotal)) * 100.0
 
-	fmtc.Printf(
-		"  {*}Processes:{!} %s {s-}(%s){!}\n",
-		fmtutil.PrettySize(procUsed),
-		fmtutil.PrettyPerc(procUsedPerc),
-	)
+	if math.IsNaN(procUsedPerc) {
+		fmtc.Println("  {*}Processes:{!} n/a")
+	} else {
+		fmtc.Printf(
+			"  {*}Processes:{!} %s {s-}(%s){!}\n",
+			fmtutil.PrettySize(procUsed),
+			fmtutil.PrettyPerc(procUsedPerc),
+		)
+	}
 
-	fmtc.Printf(
-		"  {*}Overall:{!}   %s {s-}(%s){!}\n",
-		fmtutil.PrettySize(overallUsed),
-		fmtutil.PrettyPerc(overallUsedPerc),
-	)
+	if math.IsNaN(overallUsedPerc) {
+		fmtc.Println("  {*}Overall:{!} n/a")
+	} else {
+		fmtc.Printf(
+			"  {*}Overall:{!}   %s {s-}(%s){!}\n",
+			fmtutil.PrettySize(overallUsed),
+			fmtutil.PrettyPerc(overallUsedPerc),
+		)
+	}
 
 	fmtc.Printf("  {*}Total:{!}     %s\n", fmtutil.PrettySize(overall.SwapTotal))
 

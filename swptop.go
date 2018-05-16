@@ -33,7 +33,7 @@ import (
 
 const (
 	APP  = "swptop"
-	VER  = "0.4.1"
+	VER  = "0.5.0"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 
@@ -80,6 +80,9 @@ var useRawOutput bool
 
 // winWidth is current window width
 var winWidth int
+
+// cmdEllipsis command ellipsis size
+var cmdEllipsis = 64
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -142,71 +145,82 @@ func configureUI() {
 		fmtutil.SeparatorFullscreen = true
 		winWidth = window.GetWidth()
 	}
+
+	if winWidth > 110 {
+		cmdEllipsis = winWidth - 40
+	}
 }
 
 // printPrettyTop print info with separators and headers
 func printPrettyTop() {
-	info, err := collectInfo()
+	procInfo, memInfo, err := collectInfo()
 
 	if err != nil {
 		printErrorAndExit(err.Error())
 	}
 
-	if len(info) == 0 {
+	if len(procInfo) == 0 && memInfo.SwapUsed == 0 {
 		fmtc.Println("{g}Can't find any process with swap usage{!}")
 		return
 	}
 
-	cmdEllipsis := 64
-
-	if winWidth > 110 {
-		cmdEllipsis = winWidth - 40
-	}
-
 	fmtc.NewLine()
 
+	if len(procInfo) != 0 {
+		printPrettyProcessList(procInfo)
+	}
+
 	fmtutil.Separator(true)
+	fmtc.NewLine()
+
+	printOverallInfo(procInfo, memInfo)
+
+	fmtc.NewLine()
+	fmtutil.Separator(true)
+
+	fmtc.NewLine()
+}
+
+// printPrettyProcessList print info about swap usage by processes
+func printPrettyProcessList(procInfo ProcessInfoSlice) {
+	fmtutil.Separator(true)
+
 	fmtc.Printf(
 		" {*}%5s{!} {s}|{!} {*}%16s{!} {s}|{!} {*}%8s{!} {s}|{!} {*}%-s{!}\n",
 		"PID", "USERNAME", "SWAP", "COMMAND",
 	)
+
 	fmtutil.Separator(true)
 
-	for _, pi := range info {
+	for _, pi := range procInfo {
 		fmtc.Printf(
 			" %5d {s}|{!} %16s {s}|{!} %8s {s}|{!} %-s\n",
 			pi.PID, pi.User, fmtutil.PrettySize(pi.VmSwap),
 			strutil.Ellipsis(pi.Command, cmdEllipsis),
 		)
 	}
-
-	fmtutil.Separator(true)
-
-	printOverallInfo(info)
-
-	fmtc.NewLine()
 }
 
 // printOverallInfo print overall swap usage info
-func printOverallInfo(info ProcessInfoSlice) {
-	overall := getOverallSwapUsage()
+func printOverallInfo(procInfo ProcessInfoSlice, memInfo *system.MemInfo) {
+	var procUsed uint64
+	var procUsedPerc float64
 
-	if overall == nil {
-		return
+	if len(procInfo) != 0 {
+		procUsed = calculateUsage(procInfo)
+		procUsedPerc = (float64(procUsed) / float64(memInfo.SwapTotal)) * 100.0
 	}
 
-	procUsed := calculateUsage(info)
-	procUsedPerc := (float64(procUsed) / float64(overall.SwapTotal)) * 100.0
-	overallUsed := overall.SwapUsed
+	overallUsed := memInfo.SwapUsed
 
 	// Procfs cannot show values less than 1kb, so we have use calculated processes usage
-	if procUsed > overallUsed {
+	if procUsed > memInfo.SwapUsed {
 		overallUsed = procUsed
 	}
 
-	overallUsedPerc := (float64(overallUsed) / float64(overall.SwapTotal)) * 100.0
+	overallUsedPerc := (float64(overallUsed) / float64(memInfo.SwapTotal)) * 100.0
 
-	if math.IsNaN(procUsedPerc) {
+	if len(procInfo) == 0 || math.IsNaN(procUsedPerc) {
 		fmtc.Println("  {*}Processes:{!} n/a")
 	} else {
 		fmtc.Printf(
@@ -226,30 +240,62 @@ func printOverallInfo(info ProcessInfoSlice) {
 		)
 	}
 
-	fmtc.Printf("  {*}Total:{!}     %s\n", fmtutil.PrettySize(overall.SwapTotal))
-
-	fmtutil.Separator(true)
+	fmtc.Printf("  {*}Total:{!}     %s\n", fmtutil.PrettySize(memInfo.SwapTotal))
 }
 
 // printRawTop just print raw info
 func printRawTop() {
-	info, err := collectInfo()
+	procInfo, _, err := collectInfo()
 
 	if err != nil {
 		printErrorAndExit(err.Error())
 	}
 
-	if len(info) == 0 {
+	if len(procInfo) == 0 {
 		return
 	}
 
-	for _, pi := range info {
+	for _, pi := range procInfo {
 		fmt.Printf("%d %s %d %s\n", pi.PID, pi.User, pi.VmSwap, pi.Command)
 	}
 }
 
 // collectInfo collect info about processes and sort result slice
-func collectInfo() (ProcessInfoSlice, error) {
+func collectInfo() (ProcessInfoSlice, *system.MemInfo, error) {
+	memInfo, err := system.GetMemInfo()
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	procInfo, err := getProcessesSwapUsage()
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return procInfo, memInfo, err
+}
+
+// ignoreInfo return true if we must ignore this info
+func ignoreInfo(info ProcessInfo) bool {
+	if options.Has(OPT_USER) {
+		if info.User != options.GetS(OPT_USER) {
+			return true
+		}
+	}
+
+	if options.Has(OPT_FILTER) {
+		if !strings.Contains(info.Command, options.GetS(OPT_FILTER)) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// getProcessesSwapUsage return slice with info about swap usage by processes
+func getProcessesSwapUsage() (ProcessInfoSlice, error) {
 	processes, err := process.GetList()
 
 	if err != nil {
@@ -284,34 +330,6 @@ func collectInfo() (ProcessInfoSlice, error) {
 	sort.Sort(sort.Reverse(result))
 
 	return result, nil
-}
-
-// ignoreInfo return true if we must ignore this info
-func ignoreInfo(info ProcessInfo) bool {
-	if options.Has(OPT_USER) {
-		if info.User != options.GetS(OPT_USER) {
-			return true
-		}
-	}
-
-	if options.Has(OPT_FILTER) {
-		if !strings.Contains(info.Command, options.GetS(OPT_FILTER)) {
-			return true
-		}
-	}
-
-	return false
-}
-
-// getOverallSwapUsage get overall memory info
-func getOverallSwapUsage() *system.MemInfo {
-	info, err := system.GetMemInfo()
-
-	if err != nil {
-		return nil
-	}
-
-	return info
 }
 
 // calculateUsage calculate total swap usage

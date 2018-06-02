@@ -9,8 +9,6 @@
   <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg"></a>
 </p>
 
-# `swptop` [![Build Status](https://travis-ci.org/essentialkaos/swptop.svg?branch=master)](https://travis-ci.org/essentialkaos/swptop) [![Go Report Card](https://goreportcard.com/badge/github.com/essentialkaos/swptop)](https://goreportcard.com/report/github.com/essentialkaos/swptop) [![codebeat badge](https://codebeat.co/badges/21eb1670-e54a-4373-8f4b-cfb861198d4c)](https://codebeat.co/projects/github-com-essentialkaos-swptop-master) [![License](https://gh.kaos.st/ekol.svg)](https://essentialkaos.com/ekol)
-
 `swptop` is simple utility for viewing swap consumption of processes.
 
 ### Installation

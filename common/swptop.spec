@@ -10,7 +10,7 @@
 
 Summary:         Utility for viewing swap consumption of processes
 Name:            swptop
-Version:         0.5.0
+Version:         0.5.1
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -57,6 +57,9 @@ rm -rf %{buildroot}
 ################################################################################
 
 %changelog
+* Fri Sep 14 2018 Anton Novojilov <andy@essentialkaos.com> - 0.5.1-0
+- Minor UI bugfixes
+
 * Wed May 16 2018 Anton Novojilov <andy@essentialkaos.com> - 0.5.0-0
 - Improved process of swap info collecting
 - Fixed bug with output info if swap disabled on system

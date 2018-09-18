@@ -20,6 +20,7 @@ import (
 	"pkg.re/essentialkaos/ek.v9/fmtc"
 	"pkg.re/essentialkaos/ek.v9/fmtutil"
 	"pkg.re/essentialkaos/ek.v9/fsutil"
+	"pkg.re/essentialkaos/ek.v9/mathutil"
 	"pkg.re/essentialkaos/ek.v9/options"
 	"pkg.re/essentialkaos/ek.v9/strutil"
 	"pkg.re/essentialkaos/ek.v9/system"
@@ -33,7 +34,7 @@ import (
 
 const (
 	APP  = "swptop"
-	VER  = "0.5.0"
+	VER  = "0.5.1"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 
@@ -209,6 +210,7 @@ func printOverallInfo(procInfo ProcessInfoSlice, memInfo *system.MemInfo) {
 	if len(procInfo) != 0 {
 		procUsed = calculateUsage(procInfo)
 		procUsedPerc = (float64(procUsed) / float64(memInfo.SwapTotal)) * 100.0
+		procUsedPerc = mathutil.BetweenF(procUsedPerc, 0.0001, 100.0)
 	}
 
 	overallUsed := memInfo.SwapUsed
@@ -219,6 +221,7 @@ func printOverallInfo(procInfo ProcessInfoSlice, memInfo *system.MemInfo) {
 	}
 
 	overallUsedPerc := (float64(overallUsed) / float64(memInfo.SwapTotal)) * 100.0
+	overallUsedPerc = mathutil.BetweenF(overallUsedPerc, 0.0001, 100.0)
 
 	if len(procInfo) == 0 || math.IsNaN(procUsedPerc) {
 		fmtc.Println("  {*}Processes:{!} n/a")

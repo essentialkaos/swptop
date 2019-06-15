@@ -4,7 +4,7 @@ package main
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                     Copyright (c) 2009-2018 ESSENTIAL KAOS                         //
+//                     Copyright (c) 2009-2019 ESSENTIAL KAOS                         //
 //        Essential Kaos Open Source License <https://essentialkaos.com/ekol>         //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -16,25 +16,28 @@ import (
 	"sort"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v9/env"
-	"pkg.re/essentialkaos/ek.v9/fmtc"
-	"pkg.re/essentialkaos/ek.v9/fmtutil"
-	"pkg.re/essentialkaos/ek.v9/fsutil"
-	"pkg.re/essentialkaos/ek.v9/mathutil"
-	"pkg.re/essentialkaos/ek.v9/options"
-	"pkg.re/essentialkaos/ek.v9/strutil"
-	"pkg.re/essentialkaos/ek.v9/system"
-	"pkg.re/essentialkaos/ek.v9/system/process"
-	"pkg.re/essentialkaos/ek.v9/terminal/window"
-	"pkg.re/essentialkaos/ek.v9/usage"
-	"pkg.re/essentialkaos/ek.v9/usage/update"
+	"pkg.re/essentialkaos/ek.v10/env"
+	"pkg.re/essentialkaos/ek.v10/fmtc"
+	"pkg.re/essentialkaos/ek.v10/fmtutil"
+	"pkg.re/essentialkaos/ek.v10/fsutil"
+	"pkg.re/essentialkaos/ek.v10/mathutil"
+	"pkg.re/essentialkaos/ek.v10/options"
+	"pkg.re/essentialkaos/ek.v10/strutil"
+	"pkg.re/essentialkaos/ek.v10/system"
+	"pkg.re/essentialkaos/ek.v10/system/process"
+	"pkg.re/essentialkaos/ek.v10/terminal/window"
+	"pkg.re/essentialkaos/ek.v10/usage"
+	"pkg.re/essentialkaos/ek.v10/usage/completion/bash"
+	"pkg.re/essentialkaos/ek.v10/usage/completion/fish"
+	"pkg.re/essentialkaos/ek.v10/usage/completion/zsh"
+	"pkg.re/essentialkaos/ek.v10/usage/update"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
 	APP  = "swptop"
-	VER  = "0.5.1"
+	VER  = "0.6.0"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 
@@ -44,6 +47,8 @@ const (
 	OPT_NO_COLOR = "nc:no-color"
 	OPT_HELP     = "h:help"
 	OPT_VER      = "v:version"
+
+	OPT_COMPLETION = "completion"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -74,6 +79,8 @@ var optMap = options.Map{
 	OPT_NO_COLOR: {Type: options.BOOL},
 	OPT_HELP:     {Type: options.BOOL},
 	OPT_VER:      {Type: options.BOOL, Alias: "ver"},
+
+	OPT_COMPLETION: {},
 }
 
 // useRawOutput is raw output flag
@@ -98,6 +105,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	if options.Has(OPT_COMPLETION) {
+		genCompletion()
+	}
+
 	configureUI()
 
 	if options.GetB(OPT_VER) {
@@ -117,7 +128,7 @@ func main() {
 	}
 }
 
-// configureUI configure user interface
+// configureUI configures user interface
 func configureUI() {
 	envVars := env.Get()
 	term := envVars.GetS("TERM")
@@ -152,15 +163,15 @@ func configureUI() {
 	}
 }
 
-// printPrettyTop print info with separators and headers
+// printPrettyTop prints info with separators and headers
 func printPrettyTop() {
-	procInfo, memInfo, err := collectInfo()
+	procInfo, memUsage, err := collectInfo()
 
 	if err != nil {
 		printErrorAndExit(err.Error())
 	}
 
-	if len(procInfo) == 0 && memInfo.SwapUsed == 0 {
+	if len(procInfo) == 0 && memUsage.SwapUsed == 0 {
 		fmtc.Println("{g}Can't find any process with swap usage{!}")
 		return
 	}
@@ -174,7 +185,7 @@ func printPrettyTop() {
 	fmtutil.Separator(true)
 	fmtc.NewLine()
 
-	printOverallInfo(procInfo, memInfo)
+	printOverallInfo(procInfo, memUsage)
 
 	fmtc.NewLine()
 	fmtutil.Separator(true)
@@ -182,7 +193,7 @@ func printPrettyTop() {
 	fmtc.NewLine()
 }
 
-// printPrettyProcessList print info about swap usage by processes
+// printPrettyProcessList prints info about swap usage by processes
 func printPrettyProcessList(procInfo ProcessInfoSlice) {
 	fmtutil.Separator(true)
 
@@ -202,25 +213,25 @@ func printPrettyProcessList(procInfo ProcessInfoSlice) {
 	}
 }
 
-// printOverallInfo print overall swap usage info
-func printOverallInfo(procInfo ProcessInfoSlice, memInfo *system.MemInfo) {
+// printOverallInfo prints overall swap usage info
+func printOverallInfo(procInfo ProcessInfoSlice, memUsage *system.MemUsage) {
 	var procUsed uint64
 	var procUsedPerc float64
 
 	if len(procInfo) != 0 {
 		procUsed = calculateUsage(procInfo)
-		procUsedPerc = (float64(procUsed) / float64(memInfo.SwapTotal)) * 100.0
+		procUsedPerc = (float64(procUsed) / float64(memUsage.SwapTotal)) * 100.0
 		procUsedPerc = mathutil.BetweenF(procUsedPerc, 0.0001, 100.0)
 	}
 
-	overallUsed := memInfo.SwapUsed
+	overallUsed := memUsage.SwapUsed
 
 	// Procfs cannot show values less than 1kb, so we have use calculated processes usage
-	if procUsed > memInfo.SwapUsed {
+	if procUsed > memUsage.SwapUsed {
 		overallUsed = procUsed
 	}
 
-	overallUsedPerc := (float64(overallUsed) / float64(memInfo.SwapTotal)) * 100.0
+	overallUsedPerc := (float64(overallUsed) / float64(memUsage.SwapTotal)) * 100.0
 	overallUsedPerc = mathutil.BetweenF(overallUsedPerc, 0.0001, 100.0)
 
 	if len(procInfo) == 0 || math.IsNaN(procUsedPerc) {
@@ -243,10 +254,10 @@ func printOverallInfo(procInfo ProcessInfoSlice, memInfo *system.MemInfo) {
 		)
 	}
 
-	fmtc.Printf("  {*}Total:{!}     %s\n", fmtutil.PrettySize(memInfo.SwapTotal))
+	fmtc.Printf("  {*}Total:{!}     %s\n", fmtutil.PrettySize(memUsage.SwapTotal))
 }
 
-// printRawTop just print raw info
+// printRawTop just prints raw info
 func printRawTop() {
 	procInfo, _, err := collectInfo()
 
@@ -263,9 +274,9 @@ func printRawTop() {
 	}
 }
 
-// collectInfo collect info about processes and sort result slice
-func collectInfo() (ProcessInfoSlice, *system.MemInfo, error) {
-	memInfo, err := system.GetMemInfo()
+// collectInfo collects info about processes and sort result slice
+func collectInfo() (ProcessInfoSlice, *system.MemUsage, error) {
+	memInfo, err := system.GetMemUsage()
 
 	if err != nil {
 		return nil, nil, err
@@ -280,7 +291,7 @@ func collectInfo() (ProcessInfoSlice, *system.MemInfo, error) {
 	return procInfo, memInfo, err
 }
 
-// ignoreInfo return true if we must ignore this info
+// ignoreInfo returns true if we must ignore this info
 func ignoreInfo(info ProcessInfo) bool {
 	if options.Has(OPT_USER) {
 		if info.User != options.GetS(OPT_USER) {
@@ -297,7 +308,7 @@ func ignoreInfo(info ProcessInfo) bool {
 	return false
 }
 
-// getProcessesSwapUsage return slice with info about swap usage by processes
+// getProcessesSwapUsage returns slice with info about swap usage by processes
 func getProcessesSwapUsage() (ProcessInfoSlice, error) {
 	processes, err := process.GetList()
 
@@ -335,7 +346,7 @@ func getProcessesSwapUsage() (ProcessInfoSlice, error) {
 	return result, nil
 }
 
-// calculateUsage calculate total swap usage
+// calculateUsage calculates total swap usage
 func calculateUsage(info ProcessInfoSlice) uint64 {
 	var result uint64
 
@@ -356,7 +367,7 @@ func printWarn(f string, a ...interface{}) {
 	fmtc.Fprintf(os.Stderr, "{y}"+f+"{!}\n", a...)
 }
 
-// printErrorAndExit print error mesage and exit with exit code 1
+// printErrorAndExit prints error mesage and exit with exit code 1
 func printErrorAndExit(f string, a ...interface{}) {
 	printError(f, a...)
 	os.Exit(1)
@@ -364,9 +375,15 @@ func printErrorAndExit(f string, a ...interface{}) {
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
+// showUsage prints usage info
+func showUsage() {
+	genUsage().Render()
+}
+
 // codebeat:disable[ABC]
 
-func showUsage() {
+// genUsage
+func genUsage() *usage.Info {
 	info := usage.NewInfo()
 
 	info.AddOption(OPT_USER, "Filter output by user")
@@ -380,11 +397,30 @@ func showUsage() {
 	info.AddExample("-f redis-server", "Show current swap consumption by processes with 'redis-server' in command")
 	info.AddExample("| wc -l", "Count number of processes which use swap")
 
-	info.Render()
+	return info
 }
 
 // codebeat:enable[ABC]
 
+// genCompletion generates completion for different shells
+func genCompletion() {
+	info := genUsage()
+
+	switch options.GetS(OPT_COMPLETION) {
+	case "bash":
+		fmt.Printf(bash.Generate(info, "swptop"))
+	case "fish":
+		fmt.Printf(fish.Generate(info, "swptop"))
+	case "zsh":
+		fmt.Printf(zsh.Generate(info, optMap, "swptop"))
+	default:
+		os.Exit(1)
+	}
+
+	os.Exit(0)
+}
+
+// showAbout prints basic info about app
 func showAbout() {
 	about := &usage.About{
 		App:           APP,

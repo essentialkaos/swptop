@@ -23,7 +23,7 @@ Before the initial install allows git to use redirects for [pkg.re](https://gith
 git config --global http.https://pkg.re.followRedirects true
 ```
 
-To build the `swptop` from scratch, make sure you have a working Go 1.10+ workspace ([instructions](https://golang.org/doc/install)), then:
+To build the `swptop` from scratch, make sure you have a working Go 1.11+ workspace ([instructions](https://golang.org/doc/install)), then:
 
 ```
 go get github.com/essentialkaos/swptop

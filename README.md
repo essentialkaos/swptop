@@ -23,7 +23,7 @@ Before the initial install allows git to use redirects for [pkg.re](https://gith
 git config --global http.https://pkg.re.followRedirects true
 ```
 
-To build the `swptop` from scratch, make sure you have a working Go 1.10+ workspace ([instructions](https://golang.org/doc/install)), then:
+To build the `swptop` from scratch, make sure you have a working Go 1.11+ workspace ([instructions](https://golang.org/doc/install)), then:
 
 ```
 go get github.com/essentialkaos/swptop
@@ -37,16 +37,26 @@ go get -u github.com/essentialkaos/swptop
 
 #### From ESSENTIAL KAOS Public repo for RHEL6/CentOS6
 
-```
+```bash
 [sudo] yum install -y https://yum.kaos.st/kaos-repo-latest.el6.noarch.rpm
 [sudo] yum install swptop
 ```
 
 #### From ESSENTIAL KAOS Public repo for RHEL7/CentOS7
 
-```
+```bash
 [sudo] yum install -y https://yum.kaos.st/kaos-repo-latest.el7.noarch.rpm
 [sudo] yum install swptop
+```
+
+#### Prebuilt binaries
+
+You can download prebuilt binaries for Linux from [EK Apps Repository](https://apps.kaos.st/swptop/latest).
+
+To install the latest prebuilt version, do:
+
+```bash
+bash <(curl -fsSL https://apps.kaos.st/get) swptop
 ```
 
 ### Usage

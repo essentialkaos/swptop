@@ -10,7 +10,7 @@
 
 Summary:         Utility for viewing swap consumption of processes
 Name:            swptop
-Version:         0.6.0
+Version:         0.6.1
 Release:         0%{?dist}
 Group:           Applications/System
 License:         EKOL
@@ -20,7 +20,7 @@ Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:   golang >= 1.12
+BuildRequires:   golang >= 1.13
 
 Provides:        %{name} = %{version}-%{release}
 
@@ -85,6 +85,9 @@ fi
 ################################################################################
 
 %changelog
+* Tue Oct 22 2019 Anton Novojilov <andy@essentialkaos.com> - 0.6.1-0
+- ek package updated to the latest stable version
+
 * Sat Jun 15 2019 Anton Novojilov <andy@essentialkaos.com> - 0.6.0-0
 - ek package updated to the latest stable version
 - Added completion generation for bash, zsh and fish

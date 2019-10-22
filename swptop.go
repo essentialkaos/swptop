@@ -16,28 +16,28 @@ import (
 	"sort"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v10/env"
-	"pkg.re/essentialkaos/ek.v10/fmtc"
-	"pkg.re/essentialkaos/ek.v10/fmtutil"
-	"pkg.re/essentialkaos/ek.v10/fsutil"
-	"pkg.re/essentialkaos/ek.v10/mathutil"
-	"pkg.re/essentialkaos/ek.v10/options"
-	"pkg.re/essentialkaos/ek.v10/strutil"
-	"pkg.re/essentialkaos/ek.v10/system"
-	"pkg.re/essentialkaos/ek.v10/system/process"
-	"pkg.re/essentialkaos/ek.v10/terminal/window"
-	"pkg.re/essentialkaos/ek.v10/usage"
-	"pkg.re/essentialkaos/ek.v10/usage/completion/bash"
-	"pkg.re/essentialkaos/ek.v10/usage/completion/fish"
-	"pkg.re/essentialkaos/ek.v10/usage/completion/zsh"
-	"pkg.re/essentialkaos/ek.v10/usage/update"
+	"pkg.re/essentialkaos/ek.v11/env"
+	"pkg.re/essentialkaos/ek.v11/fmtc"
+	"pkg.re/essentialkaos/ek.v11/fmtutil"
+	"pkg.re/essentialkaos/ek.v11/fsutil"
+	"pkg.re/essentialkaos/ek.v11/mathutil"
+	"pkg.re/essentialkaos/ek.v11/options"
+	"pkg.re/essentialkaos/ek.v11/strutil"
+	"pkg.re/essentialkaos/ek.v11/system"
+	"pkg.re/essentialkaos/ek.v11/system/process"
+	"pkg.re/essentialkaos/ek.v11/terminal/window"
+	"pkg.re/essentialkaos/ek.v11/usage"
+	"pkg.re/essentialkaos/ek.v11/usage/completion/bash"
+	"pkg.re/essentialkaos/ek.v11/usage/completion/fish"
+	"pkg.re/essentialkaos/ek.v11/usage/completion/zsh"
+	"pkg.re/essentialkaos/ek.v11/usage/update"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
 	APP  = "swptop"
-	VER  = "0.6.0"
+	VER  = "0.6.1"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 

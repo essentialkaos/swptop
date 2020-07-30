@@ -2,6 +2,7 @@
 
 <p align="center">
   <a href="https://travis-ci.com/essentialkaos/swptop"><img src="https://travis-ci.com/essentialkaos/swptop.svg"></a>
+  <a href="https://github.com/essentialkaos/swptop/actions?query=workflow%3ACodeQL"><img src="https://github.com/essentialkaos/swptop/workflows/CodeQL/badge.svg" /></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/swptop"><img src="https://goreportcard.com/badge/github.com/essentialkaos/swptop"></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-swptop-master"><img alt="codebeat badge" src="https://codebeat.co/badges/21eb1670-e54a-4373-8f4b-cfb861198d4c" /></a>
   <a href="https://essentialkaos.com/ekol"><img src="https://gh.kaos.st/ekol.svg"></a>

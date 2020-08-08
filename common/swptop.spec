@@ -13,7 +13,7 @@ Name:            swptop
 Version:         0.6.1
 Release:         0%{?dist}
 Group:           Applications/System
-License:         EKOL
+License:         Apache License, Version 2.0
 URL:             https://github.com/essentialkaos/swptop
 
 Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
@@ -79,7 +79,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc LICENSE.EN LICENSE.RU
+%doc LICENSE
 %{_bindir}/%{name}
 
 ################################################################################

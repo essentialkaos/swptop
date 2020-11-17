@@ -1,7 +1,7 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/swptop.svg"/></a></p>
 
 <p align="center">
-  <a href="https://travis-ci.com/essentialkaos/swptop"><img src="https://travis-ci.com/essentialkaos/swptop.svg"></a>
+  <a href="https://github.com/essentialkaos/swptop/actions"><img src="https://github.com/essentialkaos/swptop/workflows/CI/badge.svg" alt="GitHub Actions Status" /></a>
   <a href="https://github.com/essentialkaos/swptop/actions?query=workflow%3ACodeQL"><img src="https://github.com/essentialkaos/swptop/workflows/CodeQL/badge.svg" /></a>
   <a href="https://goreportcard.com/report/github.com/essentialkaos/swptop"><img src="https://goreportcard.com/badge/github.com/essentialkaos/swptop"></a>
   <a href="https://codebeat.co/projects/github-com-essentialkaos-swptop-master"><img alt="codebeat badge" src="https://codebeat.co/badges/21eb1670-e54a-4373-8f4b-cfb861198d4c" /></a>
@@ -86,8 +86,8 @@ Examples
 
 | Branch | Status |
 |--------|--------|
-| `master` | [![Build Status](https://travis-ci.com/essentialkaos/swptop.svg?branch=master)](https://travis-ci.com/essentialkaos/swptop) |
-| `develop` | [![Build Status](https://travis-ci.com/essentialkaos/swptop.svg?branch=develop)](https://travis-ci.com/essentialkaos/swptop) |
+| `master` | [![CI](https://github.com/essentialkaos/swptop/workflows/CI/badge.svg?branch=master)](https://github.com/essentialkaos/swptop/actions) |
+| `develop` | [![CI](https://github.com/essentialkaos/swptop/workflows/CI/badge.svg?branch=develop)](https://github.com/essentialkaos/swptop/actions) |
 
 ### Contributing
 

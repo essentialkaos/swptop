@@ -82,7 +82,8 @@ var optMap = options.Map{
 	OPT_HELP:     {Type: options.BOOL},
 	OPT_VER:      {Type: options.BOOL, Alias: "ver"},
 
-	OPT_COMPLETION: {},
+	OPT_COMPLETION:   {},
+	OPT_GENERATE_MAN: {Type: options.BOOL},
 }
 
 // useRawOutput is raw output flag

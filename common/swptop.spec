@@ -42,6 +42,8 @@ go build src/github.com/essentialkaos/%{name}/%{name}.go
 rm -rf %{buildroot}
 
 install -dm 755 %{buildroot}%{_bindir}
+install -dm 755 %{buildroot}%{_mandir}/man1
+
 install -pm 755 %{name} %{buildroot}%{_bindir}/
 
 ./%{name} --generate-man > %{buildroot}%{_mandir}/man1/%{name}.1

@@ -10,17 +10,17 @@
 
 Summary:         Utility for viewing swap consumption of processes
 Name:            swptop
-Version:         0.6.1
+Version:         0.6.2
 Release:         0%{?dist}
 Group:           Applications/System
 License:         Apache License, Version 2.0
-URL:             https://github.com/essentialkaos/swptop
+URL:             https://kaos.sh/swptop
 
 Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:   golang >= 1.13
+BuildRequires:   golang >= 1.14
 
 Provides:        %{name} = %{version}-%{release}
 
@@ -42,7 +42,11 @@ go build src/github.com/essentialkaos/%{name}/%{name}.go
 rm -rf %{buildroot}
 
 install -dm 755 %{buildroot}%{_bindir}
+install -dm 755 %{buildroot}%{_mandir}/man1
+
 install -pm 755 %{name} %{buildroot}%{_bindir}/
+
+./%{name} --generate-man > %{buildroot}%{_mandir}/man1/%{name}.1
 
 %clean
 rm -rf %{buildroot}
@@ -80,11 +84,15 @@ fi
 %files
 %defattr(-,root,root,-)
 %doc LICENSE
+%{_mandir}/man1/%{name}.1.*
 %{_bindir}/%{name}
 
 ################################################################################
 
 %changelog
+* Fri Dec 04 2020 Anton Novojilov <andy@essentialkaos.com> - 0.6.2-0
+- ek package updated to the latest stable version
+
 * Tue Oct 22 2019 Anton Novojilov <andy@essentialkaos.com> - 0.6.1-0
 - ek package updated to the latest stable version
 

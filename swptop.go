@@ -16,28 +16,29 @@ import (
 	"sort"
 	"strings"
 
-	"pkg.re/essentialkaos/ek.v11/env"
-	"pkg.re/essentialkaos/ek.v11/fmtc"
-	"pkg.re/essentialkaos/ek.v11/fmtutil"
-	"pkg.re/essentialkaos/ek.v11/fsutil"
-	"pkg.re/essentialkaos/ek.v11/mathutil"
-	"pkg.re/essentialkaos/ek.v11/options"
-	"pkg.re/essentialkaos/ek.v11/strutil"
-	"pkg.re/essentialkaos/ek.v11/system"
-	"pkg.re/essentialkaos/ek.v11/system/process"
-	"pkg.re/essentialkaos/ek.v11/terminal/window"
-	"pkg.re/essentialkaos/ek.v11/usage"
-	"pkg.re/essentialkaos/ek.v11/usage/completion/bash"
-	"pkg.re/essentialkaos/ek.v11/usage/completion/fish"
-	"pkg.re/essentialkaos/ek.v11/usage/completion/zsh"
-	"pkg.re/essentialkaos/ek.v11/usage/update"
+	"pkg.re/essentialkaos/ek.v12/env"
+	"pkg.re/essentialkaos/ek.v12/fmtc"
+	"pkg.re/essentialkaos/ek.v12/fmtutil"
+	"pkg.re/essentialkaos/ek.v12/fsutil"
+	"pkg.re/essentialkaos/ek.v12/mathutil"
+	"pkg.re/essentialkaos/ek.v12/options"
+	"pkg.re/essentialkaos/ek.v12/strutil"
+	"pkg.re/essentialkaos/ek.v12/system"
+	"pkg.re/essentialkaos/ek.v12/system/process"
+	"pkg.re/essentialkaos/ek.v12/terminal/window"
+	"pkg.re/essentialkaos/ek.v12/usage"
+	"pkg.re/essentialkaos/ek.v12/usage/completion/bash"
+	"pkg.re/essentialkaos/ek.v12/usage/completion/fish"
+	"pkg.re/essentialkaos/ek.v12/usage/completion/zsh"
+	"pkg.re/essentialkaos/ek.v12/usage/man"
+	"pkg.re/essentialkaos/ek.v12/usage/update"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
 	APP  = "swptop"
-	VER  = "0.6.1"
+	VER  = "0.6.2"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 
@@ -48,7 +49,8 @@ const (
 	OPT_HELP     = "h:help"
 	OPT_VER      = "v:version"
 
-	OPT_COMPLETION = "completion"
+	OPT_COMPLETION   = "completion"
+	OPT_GENERATE_MAN = "generate-man"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -106,7 +108,11 @@ func main() {
 	}
 
 	if options.Has(OPT_COMPLETION) {
-		genCompletion()
+		os.Exit(genCompletion())
+	}
+
+	if options.Has(OPT_GENERATE_MAN) {
+		os.Exit(genMan())
 	}
 
 	configureUI()
@@ -380,6 +386,11 @@ func showUsage() {
 	genUsage().Render()
 }
 
+// showAbout prints info about version
+func showAbout() {
+	genAbout().Render()
+}
+
 // codebeat:disable[ABC]
 
 // genUsage
@@ -403,7 +414,7 @@ func genUsage() *usage.Info {
 // codebeat:enable[ABC]
 
 // genCompletion generates completion for different shells
-func genCompletion() {
+func genCompletion() int {
 	info := genUsage()
 
 	switch options.GetS(OPT_COMPLETION) {
@@ -414,14 +425,26 @@ func genCompletion() {
 	case "zsh":
 		fmt.Printf(zsh.Generate(info, optMap, "swptop"))
 	default:
-		os.Exit(1)
+		return 1
 	}
 
-	os.Exit(0)
+	return 0
 }
 
-// showAbout prints basic info about app
-func showAbout() {
+// genMan generates man page
+func genMan() int {
+	fmt.Println(
+		man.Generate(
+			genUsage(),
+			genAbout(),
+		),
+	)
+
+	return 0
+}
+
+// genAbout generates info about version
+func genAbout() *usage.About {
 	about := &usage.About{
 		App:           APP,
 		Version:       VER,
@@ -432,5 +455,5 @@ func showAbout() {
 		UpdateChecker: usage.UpdateChecker{"essentialkaos/swptop", update.GitHubChecker},
 	}
 
-	about.Render()
+	return about
 }

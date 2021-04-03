@@ -392,9 +392,7 @@ func showAbout() {
 	genAbout().Render()
 }
 
-// codebeat:disable[ABC]
-
-// genUsage
+// genUsage generates usage info
 func genUsage() *usage.Info {
 	info := usage.NewInfo()
 
@@ -411,8 +409,6 @@ func genUsage() *usage.Info {
 
 	return info
 }
-
-// codebeat:enable[ABC]
 
 // genCompletion generates completion for different shells
 func genCompletion() int {

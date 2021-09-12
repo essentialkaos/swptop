@@ -1,10 +1,10 @@
 <p align="center"><a href="#readme"><img src="https://gh.kaos.st/swptop.svg"/></a></p>
 
 <p align="center">
-  <a href="https://github.com/essentialkaos/swptop/actions"><img src="https://github.com/essentialkaos/swptop/workflows/CI/badge.svg" alt="GitHub Actions Status" /></a>
-  <a href="https://github.com/essentialkaos/swptop/actions?query=workflow%3ACodeQL"><img src="https://github.com/essentialkaos/swptop/workflows/CodeQL/badge.svg" /></a>
-  <a href="https://goreportcard.com/report/github.com/essentialkaos/swptop"><img src="https://goreportcard.com/badge/github.com/essentialkaos/swptop"></a>
-  <a href="https://codebeat.co/projects/github-com-essentialkaos-swptop-master"><img alt="codebeat badge" src="https://codebeat.co/badges/21eb1670-e54a-4373-8f4b-cfb861198d4c" /></a>
+  <a href="https://kaos.sh/w/swptop/ci"><img src="https://kaos.sh/w/swptop/ci.svg" alt="GitHub Actions CI Status" /></a>
+  <a href="https://kaos.sh/r/swptop"><img src="https://kaos.sh/r/swptop.svg" alt="GoReportCard" /></a>
+  <a href="https://kaos.sh/b/swptop"><img src="https://kaos.sh/b/21eb1670-e54a-4373-8f4b-cfb861198d4c.svg" alt="codebeat badge" /></a>
+  <a href="https://kaos.sh/w/swptop/codeql"><img src="https://kaos.sh/w/swptop/codeql.svg" alt="GitHub Actions CodeQL Status" /></a>
   <a href="#license"><img src="https://gh.kaos.st/apache2.svg"></a>
 </p>
 
@@ -18,7 +18,7 @@
 
 #### From source
 
-To build the `swptop` from scratch, make sure you have a working Go 1.14+ workspace ([instructions](https://golang.org/doc/install)), then:
+To build the `swptop` from scratch, make sure you have a working Go 1.16+ workspace ([instructions](https://golang.org/doc/install)), then:
 
 ```
 go get github.com/essentialkaos/swptop
@@ -80,8 +80,8 @@ Examples
 
 | Branch | Status |
 |--------|--------|
-| `master` | [![CI](https://github.com/essentialkaos/swptop/workflows/CI/badge.svg?branch=master)](https://github.com/essentialkaos/swptop/actions) |
-| `develop` | [![CI](https://github.com/essentialkaos/swptop/workflows/CI/badge.svg?branch=develop)](https://github.com/essentialkaos/swptop/actions) |
+| `master` | [![CI](https://kaos.sh/w/swptop/ci.svg?branch=master)](https://kaos.sh/w/swptop/ci?query=branch:master) |
+| `develop` | [![CI](https://kaos.sh/w/swptop/ci.svg?branch=master)](https://kaos.sh/w/swptop/ci?query=branch:develop) |
 
 ### Contributing
 

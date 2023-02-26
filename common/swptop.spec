@@ -1,16 +1,12 @@
 ################################################################################
 
-# rpmbuilder:relative-pack true
-
-################################################################################
-
-%define  debug_package %{nil}
+%define debug_package  %{nil}
 
 ################################################################################
 
 Summary:         Utility for viewing swap consumption of processes
 Name:            swptop
-Version:         0.6.3
+Version:         0.6.4
 Release:         0%{?dist}
 Group:           Applications/System
 License:         Apache License, Version 2.0
@@ -20,7 +16,7 @@ Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:   golang >= 1.17
+BuildRequires:   golang >= 1.19
 
 Provides:        %{name} = %{version}-%{release}
 
@@ -35,9 +31,14 @@ Utility for viewing swap consumption of processes.
 %setup -q
 
 %build
-export GOPATH=$(pwd)
-pushd src/github.com/essentialkaos/%{name}
-  go build -mod vendor -o $GOPATH/%{name} %{name}.go
+if [[ ! -d "%{name}/vendor" ]] ; then
+  echo "This package requires vendored dependencies"
+  exit 1
+fi
+
+pushd %{name}
+  go build %{name}.go
+  cp LICENSE ..
 popd
 
 %install
@@ -46,9 +47,9 @@ rm -rf %{buildroot}
 install -dm 755 %{buildroot}%{_bindir}
 install -dm 755 %{buildroot}%{_mandir}/man1
 
-install -pm 755 %{name} %{buildroot}%{_bindir}/
+install -pm 755 %{name}/%{name} %{buildroot}%{_bindir}/
 
-./%{name} --generate-man > %{buildroot}%{_mandir}/man1/%{name}.1
+./%{name}/%{name} --generate-man > %{buildroot}%{_mandir}/man1/%{name}.1
 
 %clean
 rm -rf %{buildroot}
@@ -92,6 +93,14 @@ fi
 ################################################################################
 
 %changelog
+* Sun Feb 26 2023 Anton Novojilov <andy@essentialkaos.com> - 0.6.4-0
+- Added verbose version output
+- Dependencies update
+- Code refactoring
+
+* Thu Dec 01 2022 Anton Novojilov <andy@essentialkaos.com> - 0.6.3-1
+- Fixed build using sources from source.kaos.st
+
 * Tue Mar 29 2022 Anton Novojilov <andy@essentialkaos.com> - 0.6.3-0
 - Removed pkg.re usage
 - Added module info

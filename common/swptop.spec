@@ -1,13 +1,13 @@
 ################################################################################
 
-%define  debug_package %{nil}
+%define debug_package  %{nil}
 
 ################################################################################
 
 Summary:         Utility for viewing swap consumption of processes
 Name:            swptop
-Version:         0.6.3
-Release:         1%{?dist}
+Version:         0.6.4
+Release:         0%{?dist}
 Group:           Applications/System
 License:         Apache License, Version 2.0
 URL:             https://kaos.sh/swptop
@@ -93,6 +93,11 @@ fi
 ################################################################################
 
 %changelog
+* Sun Feb 26 2023 Anton Novojilov <andy@essentialkaos.com> - 0.6.4-0
+- Added verbose version output
+- Dependencies update
+- Code refactoring
+
 * Thu Dec 01 2022 Anton Novojilov <andy@essentialkaos.com> - 0.6.3-1
 - Fixed build using sources from source.kaos.st
 

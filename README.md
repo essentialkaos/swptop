@@ -21,13 +21,7 @@
 To build the `swptop` from scratch, make sure you have a working Go 1.19+ workspace ([instructions](https://golang.org/doc/install)), then:
 
 ```
-go get github.com/essentialkaos/swptop
-```
-
-If you want to update `swptop` to latest stable release, do:
-
-```
-go get -u github.com/essentialkaos/swptop
+go install github.com/essentialkaos/swptop@latest
 ```
 
 #### From [ESSENTIAL KAOS Public Repository](https://yum.kaos.st)

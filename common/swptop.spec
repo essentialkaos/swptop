@@ -6,7 +6,7 @@
 
 Summary:         Utility for viewing swap consumption of processes
 Name:            swptop
-Version:         0.6.4
+Version:         1.0.0
 Release:         0%{?dist}
 Group:           Applications/System
 License:         Apache License, Version 2.0
@@ -16,7 +16,7 @@ Source0:         https://source.kaos.st/%{name}/%{name}-%{version}.tar.bz2
 
 BuildRoot:       %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:   golang >= 1.19
+BuildRequires:   golang >= 1.21
 
 Provides:        %{name} = %{version}-%{release}
 
@@ -93,6 +93,11 @@ fi
 ################################################################################
 
 %changelog
+* Thu Mar 28 2024 Anton Novojilov <andy@essentialkaos.com> - 1.0.0-0
+- Improved support information gathering
+- Code refactoring
+- Dependencies update
+
 * Sun Feb 26 2023 Anton Novojilov <andy@essentialkaos.com> - 0.6.4-0
 - Added verbose version output
 - Dependencies update

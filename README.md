@@ -1,14 +1,14 @@
-<p align="center"><a href="#readme"><img src="https://gh.kaos.st/swptop.svg"/></a></p>
+<p align="center"><a href="#readme"><img src=".github/images/card.svg"/></a></p>
 
 <p align="center">
   <a href="https://kaos.sh/w/swptop/ci"><img src="https://kaos.sh/w/swptop/ci.svg" alt="GitHub Actions CI Status" /></a>
   <a href="https://kaos.sh/r/swptop"><img src="https://kaos.sh/r/swptop.svg" alt="GoReportCard" /></a>
   <a href="https://kaos.sh/b/swptop"><img src="https://kaos.sh/b/21eb1670-e54a-4373-8f4b-cfb861198d4c.svg" alt="codebeat badge" /></a>
   <a href="https://kaos.sh/w/swptop/codeql"><img src="https://kaos.sh/w/swptop/codeql.svg" alt="GitHub Actions CodeQL Status" /></a>
-  <a href="#license"><img src="https://gh.kaos.st/apache2.svg"></a>
+  <a href="#license"><img src=".github/images/license.svg"/></a>
 </p>
 
-<p align="center"><a href="#installation">Installation</a> • <a href="#usage">Usage</a> • <a href="#build-status">Build Status</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
+<p align="center"><a href="#installation">Installation</a> • <a href="#usage">Usage</a> • <a href="#ci-status">CI Status</a> • <a href="#contributing">Contributing</a> • <a href="#license">License</a></p>
 
 <br/>
 
@@ -24,7 +24,7 @@ To build the `swptop` from scratch, make sure you have a working Go 1.19+ worksp
 go install github.com/essentialkaos/swptop@latest
 ```
 
-#### From [ESSENTIAL KAOS Public Repository](https://pkgs.kaos.st)
+#### From [ESSENTIAL KAOS Public Repository](https://kaos.sh/kaos-repo)
 
 ```bash
 sudo yum install -y https://pkgs.kaos.st/kaos-repo-latest.el$(grep 'CPE_NAME' /etc/os-release | tr -d '"' | cut -d':' -f5).noarch.rpm
@@ -45,7 +45,7 @@ bash <(curl -fsSL https://apps.kaos.st/get) swptop
 
 <img src=".github/images/usage.svg" />
 
-### Build Status
+### CI Status
 
 | Branch | Status |
 |--------|--------|

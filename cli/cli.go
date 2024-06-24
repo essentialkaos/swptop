@@ -26,6 +26,7 @@ import (
 	"github.com/essentialkaos/ek/v12/support/deps"
 	"github.com/essentialkaos/ek/v12/system"
 	"github.com/essentialkaos/ek/v12/system/process"
+	"github.com/essentialkaos/ek/v12/terminal"
 	"github.com/essentialkaos/ek/v12/terminal/tty"
 	"github.com/essentialkaos/ek/v12/usage"
 	"github.com/essentialkaos/ek/v12/usage/completion/bash"
@@ -39,7 +40,7 @@ import (
 
 const (
 	APP  = "swptop"
-	VER  = "1.0.0"
+	VER  = "1.0.1"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 
@@ -106,11 +107,9 @@ func Init(gitRev string, gomod []byte) {
 
 	_, errs := options.Parse(optMap)
 
-	if len(errs) != 0 {
-		for _, err := range errs {
-			printError(err.Error())
-		}
-
+	if !errs.IsEmpty() {
+		terminal.Error("Options parsing errors:")
+		terminal.Error(errs.String())
 		os.Exit(1)
 	}
 
@@ -361,14 +360,9 @@ func calculateUsage(info ProcessInfoSlice) uint64 {
 	return result
 }
 
-// printError prints error message to console
-func printError(f string, a ...interface{}) {
-	fmtc.Fprintf(os.Stderr, "{r}"+f+"{!}\n", a...)
-}
-
 // printErrorAndExit prints error message and exit with exit code 1
 func printErrorAndExit(f string, a ...interface{}) {
-	printError(f, a...)
+	terminal.Error(f, a...)
 	os.Exit(1)
 }
 
@@ -378,11 +372,11 @@ func printErrorAndExit(f string, a ...interface{}) {
 func printCompletion() int {
 	switch options.GetS(OPT_COMPLETION) {
 	case "bash":
-		fmt.Print(bash.Generate(genUsage(), "swptop"))
+		fmt.Print(bash.Generate(genUsage(), APP))
 	case "fish":
-		fmt.Print(fish.Generate(genUsage(), "swptop"))
+		fmt.Print(fish.Generate(genUsage(), APP))
 	case "zsh":
-		fmt.Print(zsh.Generate(genUsage(), optMap, "swptop"))
+		fmt.Print(zsh.Generate(genUsage(), optMap, APP))
 	default:
 		return 1
 	}
@@ -392,12 +386,7 @@ func printCompletion() int {
 
 // printMan prints man page
 func printMan() {
-	fmt.Println(
-		man.Generate(
-			genUsage(),
-			genAbout(""),
-		),
-	)
+	fmt.Println(man.Generate(genUsage(), genAbout("")))
 }
 
 // genUsage generates usage info
@@ -412,7 +401,10 @@ func genUsage() *usage.Info {
 
 	info.AddExample("", "Show current swap consumption of all processes")
 	info.AddExample("-u redis", "Show current swap consumption by webserver user processes")
-	info.AddExample("-f redis-server", "Show current swap consumption by processes with 'redis-server' in command")
+	info.AddExample(
+		"-f redis-server",
+		`Show current swap consumption by processes with "redis-server" in command`,
+	)
 	info.AddExample("| wc -l", "Count number of processes which use swap")
 
 	return info

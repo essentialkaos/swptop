@@ -3,7 +3,6 @@
 <p align="center">
   <a href="https://kaos.sh/w/swptop/ci"><img src="https://kaos.sh/w/swptop/ci.svg" alt="GitHub Actions CI Status" /></a>
   <a href="https://kaos.sh/r/swptop"><img src="https://kaos.sh/r/swptop.svg" alt="GoReportCard" /></a>
-  <a href="https://kaos.sh/b/swptop"><img src="https://kaos.sh/b/21eb1670-e54a-4373-8f4b-cfb861198d4c.svg" alt="codebeat badge" /></a>
   <a href="https://kaos.sh/w/swptop/codeql"><img src="https://kaos.sh/w/swptop/codeql.svg" alt="GitHub Actions CodeQL Status" /></a>
   <a href="#license"><img src=".github/images/license.svg"/></a>
 </p>

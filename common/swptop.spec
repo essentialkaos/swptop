@@ -97,7 +97,7 @@ fi
 
 %changelog
 * Wed Sep 25 2024 Anton Novojilov <andy@essentialkaos.com> - 1.1.0-0
-- Add more info to verbose version info
+- Added more info to verbose version info
 - Dependencies update
 
 * Mon Jun 24 2024 Anton Novojilov <andy@essentialkaos.com> - 1.0.1-0

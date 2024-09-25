@@ -24,6 +24,8 @@ import (
 	"github.com/essentialkaos/ek/v13/strutil"
 	"github.com/essentialkaos/ek/v13/support"
 	"github.com/essentialkaos/ek/v13/support/deps"
+	"github.com/essentialkaos/ek/v13/support/kernel"
+	"github.com/essentialkaos/ek/v13/support/resources"
 	"github.com/essentialkaos/ek/v13/system"
 	"github.com/essentialkaos/ek/v13/system/process"
 	"github.com/essentialkaos/ek/v13/terminal"
@@ -128,6 +130,8 @@ func Init(gitRev string, gomod []byte) {
 		support.Collect(APP, VER).
 			WithRevision(gitRev).
 			WithDeps(deps.Extract(gomod)).
+			WithResources(resources.Collect()).
+			WithKernel(kernel.Collect("vm.swappiness")).
 			Print()
 		os.Exit(0)
 	case options.GetB(OPT_HELP):

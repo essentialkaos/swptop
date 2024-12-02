@@ -204,16 +204,16 @@ func printPrettyTop() {
 func printPrettyProcessList(procInfo ProcessInfoSlice) {
 	fmtutil.Separator(true)
 
-	fmtc.Printf(
-		" {*}%5s{!} {s}|{!} {*}%16s{!} {s}|{!} {*}%8s{!} {s}|{!} {*}%-s{!}\n",
+	fmtc.Printfn(
+		" {*}%5s{!} {s}|{!} {*}%16s{!} {s}|{!} {*}%8s{!} {s}|{!} {*}%-s{!}",
 		"PID", "USERNAME", "SWAP", "COMMAND",
 	)
 
 	fmtutil.Separator(true)
 
 	for _, pi := range procInfo {
-		fmtc.Printf(
-			" %5d {s}|{!} %16s {s}|{!} %8s {s}|{!} %-s\n",
+		fmtc.Printfn(
+			" %5d {s}|{!} %16s {s}|{!} %8s {s}|{!} %-s",
 			pi.PID, pi.User, fmtutil.PrettySize(pi.VmSwap),
 			strutil.Ellipsis(pi.Command, cmdEllipsis),
 		)
@@ -227,7 +227,7 @@ func printOverallInfo(procInfo ProcessInfoSlice, memUsage *system.MemUsage) {
 
 	if len(procInfo) != 0 {
 		procUsed = calculateUsage(procInfo)
-		procUsedPerc = (float64(procUsed) / float64(memUsage.SwapTotal)) * 100.0
+		procUsedPerc = mathutil.Perc(procUsed, memUsage.SwapTotal)
 		procUsedPerc = mathutil.Between(procUsedPerc, 0.0001, 100.0)
 	}
 
@@ -238,14 +238,14 @@ func printOverallInfo(procInfo ProcessInfoSlice, memUsage *system.MemUsage) {
 		overallUsed = procUsed
 	}
 
-	overallUsedPerc := (float64(overallUsed) / float64(memUsage.SwapTotal)) * 100.0
+	overallUsedPerc := mathutil.Perc(overallUsed, memUsage.SwapTotal)
 	overallUsedPerc = mathutil.Between(overallUsedPerc, 0.0001, 100.0)
 
 	if len(procInfo) == 0 || math.IsNaN(procUsedPerc) {
 		fmtc.Println("  {*}Processes:{!} n/a")
 	} else {
-		fmtc.Printf(
-			"  {*}Processes:{!} %s {s-}(%s){!}\n",
+		fmtc.Printfn(
+			"  {*}Processes:{!} %s {s-}(%s){!}",
 			fmtutil.PrettySize(procUsed),
 			fmtutil.PrettyPerc(procUsedPerc),
 		)
@@ -254,14 +254,14 @@ func printOverallInfo(procInfo ProcessInfoSlice, memUsage *system.MemUsage) {
 	if math.IsNaN(overallUsedPerc) {
 		fmtc.Println("  {*}Overall:{!} n/a")
 	} else {
-		fmtc.Printf(
-			"  {*}Overall:{!}   %s {s-}(%s){!}\n",
+		fmtc.Printfn(
+			"  {*}Overall:{!}   %s {s-}(%s){!}",
 			fmtutil.PrettySize(overallUsed),
 			fmtutil.PrettyPerc(overallUsedPerc),
 		)
 	}
 
-	fmtc.Printf("  {*}Total:{!}     %s\n", fmtutil.PrettySize(memUsage.SwapTotal))
+	fmtc.Printfn("  {*}Total:{!}     %s", fmtutil.PrettySize(memUsage.SwapTotal))
 }
 
 // printRawTop just prints raw info

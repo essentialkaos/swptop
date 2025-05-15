@@ -5,7 +5,7 @@ package cli
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2025 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2024 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -42,7 +42,7 @@ import (
 
 const (
 	APP  = "swptop"
-	VER  = "1.1.0"
+	VER  = "1.1.1"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 
@@ -70,12 +70,6 @@ type ProcessInfo struct {
 
 // ProcessInfoSlice is ProcessInfo slice
 type ProcessInfoSlice []ProcessInfo
-
-// ////////////////////////////////////////////////////////////////////////////////// //
-
-func (s ProcessInfoSlice) Len() int           { return len(s) }
-func (s ProcessInfoSlice) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
-func (s ProcessInfoSlice) Less(i, j int) bool { return s[i].VmSwap < s[j].VmSwap }
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
@@ -111,7 +105,7 @@ func Init(gitRev string, gomod []byte) {
 
 	if !errs.IsEmpty() {
 		terminal.Error("Options parsing errors:")
-		terminal.Error(errs.Error("- "))
+		terminal.Error(errs.Error(" - "))
 		os.Exit(1)
 	}
 
@@ -171,16 +165,16 @@ func configureUI() {
 }
 
 // printPrettyTop prints info with separators and headers
-func printPrettyTop() {
+func printPrettyTop() error {
 	procInfo, memUsage, err := collectInfo()
 
 	if err != nil {
-		printErrorAndExit(err.Error())
+		return err
 	}
 
 	if len(procInfo) == 0 && memUsage.SwapUsed == 0 {
 		fmtc.Println("{g}Can't find any process with swap usage{!}")
-		return
+		return nil
 	}
 
 	fmtc.NewLine()
@@ -198,6 +192,8 @@ func printPrettyTop() {
 	fmtutil.Separator(true)
 
 	fmtc.NewLine()
+
+	return nil
 }
 
 // printPrettyProcessList prints info about swap usage by processes
@@ -265,20 +261,22 @@ func printOverallInfo(procInfo ProcessInfoSlice, memUsage *system.MemUsage) {
 }
 
 // printRawTop just prints raw info
-func printRawTop() {
+func printRawTop() error {
 	procInfo, _, err := collectInfo()
 
 	if err != nil {
-		printErrorAndExit(err.Error())
+		return err
 	}
 
 	if len(procInfo) == 0 {
-		return
+		return nil
 	}
 
 	for _, pi := range procInfo {
 		fmt.Printf("%d %s %d %s\n", pi.PID, pi.User, pi.VmSwap, pi.Command)
 	}
+
+	return nil
 }
 
 // collectInfo collects info about processes and sort result slice
@@ -320,7 +318,7 @@ func getProcessesSwapUsage() (ProcessInfoSlice, error) {
 	processes, err := process.GetList()
 
 	if err != nil {
-		fmt.Errorf("Can't collect info about processes")
+		return nil, fmt.Errorf("Can't collect info about processes")
 	}
 
 	var result ProcessInfoSlice
@@ -348,7 +346,9 @@ func getProcessesSwapUsage() (ProcessInfoSlice, error) {
 		}
 	}
 
-	sort.Sort(sort.Reverse(result))
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].VmSwap > result[j].VmSwap
+	})
 
 	return result, nil
 }
@@ -362,12 +362,6 @@ func calculateUsage(info ProcessInfoSlice) uint64 {
 	}
 
 	return result
-}
-
-// printErrorAndExit prints error message and exit with exit code 1
-func printErrorAndExit(f string, a ...interface{}) {
-	terminal.Error(f, a...)
-	os.Exit(1)
 }
 
 // ////////////////////////////////////////////////////////////////////////////////// //

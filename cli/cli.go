@@ -5,7 +5,7 @@ package cli
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 //                                                                                    //
-//                         Copyright (c) 2024 ESSENTIAL KAOS                          //
+//                         Copyright (c) 2026 ESSENTIAL KAOS                          //
 //      Apache License, Version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>     //
 //                                                                                    //
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -17,32 +17,32 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/essentialkaos/ek/v13/fmtc"
-	"github.com/essentialkaos/ek/v13/fmtutil"
-	"github.com/essentialkaos/ek/v13/mathutil"
-	"github.com/essentialkaos/ek/v13/options"
-	"github.com/essentialkaos/ek/v13/strutil"
-	"github.com/essentialkaos/ek/v13/support"
-	"github.com/essentialkaos/ek/v13/support/deps"
-	"github.com/essentialkaos/ek/v13/support/kernel"
-	"github.com/essentialkaos/ek/v13/support/resources"
-	"github.com/essentialkaos/ek/v13/system"
-	"github.com/essentialkaos/ek/v13/system/process"
-	"github.com/essentialkaos/ek/v13/terminal"
-	"github.com/essentialkaos/ek/v13/terminal/tty"
-	"github.com/essentialkaos/ek/v13/usage"
-	"github.com/essentialkaos/ek/v13/usage/completion/bash"
-	"github.com/essentialkaos/ek/v13/usage/completion/fish"
-	"github.com/essentialkaos/ek/v13/usage/completion/zsh"
-	"github.com/essentialkaos/ek/v13/usage/man"
-	"github.com/essentialkaos/ek/v13/usage/update"
+	"github.com/essentialkaos/ek/v14/fmtc"
+	"github.com/essentialkaos/ek/v14/fmtutil"
+	"github.com/essentialkaos/ek/v14/mathutil"
+	"github.com/essentialkaos/ek/v14/options"
+	"github.com/essentialkaos/ek/v14/strutil"
+	"github.com/essentialkaos/ek/v14/support"
+	"github.com/essentialkaos/ek/v14/support/deps"
+	"github.com/essentialkaos/ek/v14/support/kernel"
+	"github.com/essentialkaos/ek/v14/support/resources"
+	"github.com/essentialkaos/ek/v14/system"
+	"github.com/essentialkaos/ek/v14/system/process"
+	"github.com/essentialkaos/ek/v14/terminal"
+	"github.com/essentialkaos/ek/v14/terminal/tty"
+	"github.com/essentialkaos/ek/v14/usage"
+	"github.com/essentialkaos/ek/v14/usage/completion/bash"
+	"github.com/essentialkaos/ek/v14/usage/completion/fish"
+	"github.com/essentialkaos/ek/v14/usage/completion/zsh"
+	"github.com/essentialkaos/ek/v14/usage/man"
+	"github.com/essentialkaos/ek/v14/usage/update"
 )
 
 // ////////////////////////////////////////////////////////////////////////////////// //
 
 const (
 	APP  = "swptop"
-	VER  = "1.1.1"
+	VER  = "1.2.0"
 	DESC = "Utility for viewing swap consumption of processes"
 )
 
@@ -105,7 +105,7 @@ func Init(gitRev string, gomod []byte) {
 
 	if !errs.IsEmpty() {
 		terminal.Error("Options parsing errors:")
-		terminal.Error(errs.Error(" - "))
+		terminal.Error(errs.ErrorWithPrefix(" - "))
 		os.Exit(1)
 	}
 

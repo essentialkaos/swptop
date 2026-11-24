@@ -1,10 +1,10 @@
 module github.com/essentialkaos/swptop
 
-go 1.23.6
+go 1.26.0
 
-require github.com/essentialkaos/ek/v13 v13.26.2
+require github.com/essentialkaos/ek/v14 v14.5.0
 
 require (
 	github.com/essentialkaos/depsy v1.3.1 // indirect
-	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
 )
